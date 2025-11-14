@@ -1,0 +1,5 @@
+{
+  "name": "StreamVerse",
+  "description": "A modern, free video streaming web application designed with a clean and simple UI, inspired by YTS. It features user authentication, watch history, recommendations, and the ability to stream from external video links, all built on React and Supabase.",
+  "requestFramePermissions": []
+}
