@@ -3,7 +3,7 @@ import { supabase } from '../supabaseClient'; // We import the Supabase client y
 import { GoogleGenAI, Type } from '@google/genai'; // This is for the AI recommendations
 
 // Initialize the Google AI client for recommendations
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
 
 // Fetches ALL movies from your Supabase 'movies' table
 export const getMovies = async (): Promise<Movie[]> => {
