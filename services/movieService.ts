@@ -5,8 +5,6 @@ import { GoogleGenAI, Type } from '@google/genai'; // This is for the AI recomme
 // Initialize the Google AI client for recommendations
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
-// --- All the mock/dummy data has been removed ---
-
 // Fetches ALL movies from your Supabase 'movies' table
 export const getMovies = async (): Promise<Movie[]> => {
   const { data, error } = await supabase.from('movies').select('*');
@@ -105,20 +103,68 @@ export const getRecommendedMovies = async (watchedMovies: Movie[]): Promise<Movi
   }
 
   try {
-    // Get ALL movies from the database to compare against
     const allMovies = await getMovies();
     const watchedMovieIds = new Set(watchedMovies.map(m => m.id));
-    
-    // Find movies that the user has NOT watched yet
     const availableMovies = allMovies.filter(m => !watchedMovieIds.has(m.id));
     
     if (availableMovies.length === 0) {
         return [];
     }
 
-    // The AI prompt remains the same
     const prompt = `
       Based on the user's watch history, recommend 4 new movies for them to watch from the list of available movies.
       
       The user has watched:
-      ${watchedMovies.map(m => `- ${m.title
+      ${watchedMovies.map(m => `- ${m.title} (${m.genres.join(', ')})`).join('\n')}
+
+      Here is the list of available movies to choose from:
+      ${availableMovies.map(m => `(id: ${m.id}, title: ${m.title}, genres: [${m.genres.join(', ')}], synopsis: ${m.synopsis})`).join('\n')}
+
+      Provide a JSON response with a list of exactly 4 recommended movie IDs and a short, compelling, one-sentence reason for each recommendation.
+    `;
+    
+    const responseSchema = {
+        type: Type.OBJECT,
+        properties: {
+            recommendations: {
+                type: Type.ARRAY,
+                items: {
+                    type: Type.OBJECT,
+                    properties: {
+                        id: { type: Type.STRING },
+                        reason: { type: Type.STRING },
+                    },
+                    required: ['id', 'reason'],
+                }
+            }
+        },
+        required: ['recommendations'],
+    };
+
+    const response = await ai.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: prompt,
+        config: {
+            responseMimeType: 'application/json',
+            responseSchema,
+        },
+    });
+
+    const resultJson = JSON.parse(response.text);
+    const recommendations: { id: string, reason: string }[] = resultJson.recommendations || [];
+
+    const recommendedMovies = recommendations.map(rec => {
+        const movie = allMovies.find(m => m.id === rec.id);
+        if (movie) {
+            return { ...movie, reason: rec.reason };
+        }
+        return null;
+    }).filter((m): m is Movie => m !== null);
+    
+    return recommendedMovies;
+
+  } catch (error) {
+    console.error("Failed to get movie recommendations:", error);
+    return [];
+  }
+};
