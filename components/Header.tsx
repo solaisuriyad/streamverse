@@ -1,17 +1,30 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../AuthContext'; // Import our new auth hook
-import { supabase } from '../supabaseClient'; // Import supabase to handle logout
+import { useAuth } from '../AuthContext';
+import { supabase } from '../supabaseClient';
 
-// Logo component remains the same
+// This is the full, correct Logo component
 const Logo: React.FC = () => (
-    // ... (no changes needed inside the Logo component)
+  <div className="flex items-center space-x-3" aria-label="StreamVerse Home">
+    <div className="w-10 h-10">
+       <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="logo-gradient" x1="0.5" y1="0" x2="0.5" y2="1">
+            <stop stopColor="#3B82F6" />
+            <stop offset="1" stopColor="#818CF8" />
+          </linearGradient>
+        </defs>
+        <path d="M49.4313 18.5395C45.1924 14.2827 38.9026 12 32 12C21.5066 12 13.0132 20.4934 13.0132 31V33C13.0132 36.3137 15.6995 39 19.0132 39H25L32 47L39 39H44.9868C48.3005 39 50.9868 36.3137 50.9868 33V31C50.9868 26.177 49.4313 22.0645 46.9605 18.5395" fill="white"/>
+        <path d="M14.5687 45.4605C18.8076 49.7173 25.0974 52 32 52C42.4934 52 50.9868 43.5066 50.9868 33V31C50.9868 27.6863 48.3005 25 44.9868 25H39L32 17L25 25H19.0132C15.6995 25 13.0132 27.6863 13.0132 31V33C13.0132 37.823 14.5687 41.9355 17.0395 45.4605" fill="url(#logo-gradient)"/>
+      </svg>
+    </div>
+    <span className="text-2xl font-bold text-white">Stream<span className="text-blue-400">Verse</span></span>
+  </div>
 );
 
 const Header: React.FC = () => {
-  // REMOVED: const [isLoggedIn] = useState(true);
-  const { user } = useAuth(); // Get the REAL user from our AuthContext
-  const isLoggedIn = !!user; // isLoggedIn is now true only if there is a real user
+  const { user } = useAuth();
+  const isLoggedIn = !!user;
 
   const [isProfileMenuOpen, setProfileMenuOpen] = useState(false);
   const profileMenuRef = useRef<HTMLDivElement>(null);
@@ -23,7 +36,7 @@ const Header: React.FC = () => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target as Node)) {
+      if (profileMenuRef.current && !profileMenu-ref.current.contains(event.target as Node)) {
         setProfileMenuOpen(false);
       }
     };
@@ -82,7 +95,7 @@ const Header: React.FC = () => {
                   <a
                     href="#"
                     className="block px-4 py-2 text-sm text-red-400 hover:bg-gray-600"
-                    onClick={handleLogout} // Use the real logout function
+                    onClick={handleLogout}
                   >
                     Logout
                   </a>
