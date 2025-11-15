@@ -58,7 +58,7 @@ const MovieDetailPage: React.FC = () => {
       </div>
       <div className="relative -mt-48 container mx-auto px-4 pb-12">
         <div className="md:flex md:space-x-8">
-          <div className="md:w-1/3 lg:w-1/4 flex-shrink-0">
+          <div className="md:w-1/3 lg:w-1-4 flex-shrink-0">
             <img src={movie.posterUrl} alt={movie.title} className="rounded-lg shadow-2xl w-full" />
           </div>
           <div className="md:w-2/3 lg:w-3/4 mt-8 md:mt-12 text-white">
@@ -71,10 +71,10 @@ const MovieDetailPage: React.FC = () => {
                 {movie.rating} / 10
               </span>
             </div>
-            {/* THIS IS THE FIX: Check if genres exist and is an array before mapping */}
+            {/* THIS IS THE CORRECTED CODE BLOCK */}
             <div className="mt-4 flex flex-wrap gap-2">
-              {movie.genres && Array.isArray(movie.genres) && movie.genres.map(genre => (
-                <span key={genre} className="bg-gray-700 text-gray-300 text-sm font-semibold px-3 py-1 rounded-full">{genre}</span>
+              {movie.genres && typeof movie.genres === 'string' && movie.genres.split(',').map(genre => (
+                <span key={genre.trim()} className="bg-gray-700 text-gray-300 text-sm font-semibold px-3 py-1 rounded-full">{genre.trim()}</span>
               ))}
             </div>
             <p className="mt-6 text-gray-300 leading-relaxed">{movie.synopsis}</p>
