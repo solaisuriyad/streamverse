@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
 import { supabase } from '../supabaseClient';
 
-// This is the full, correct Logo component
 const Logo: React.FC = () => (
   <div className="flex items-center space-x-3" aria-label="StreamVerse Home">
     <div className="w-10 h-10">
@@ -36,7 +35,8 @@ const Header: React.FC = () => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (profileMenuRef.current && !profileMenu-ref.current.contains(event.target as Node)) {
+      // THIS IS THE FIX: Corrected the typo from 'profileMenu-ref' to 'profileMenuRef'
+      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target as Node)) {
         setProfileMenuOpen(false);
       }
     };
