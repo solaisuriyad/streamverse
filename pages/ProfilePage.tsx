@@ -2,20 +2,23 @@ import React, { useState, useEffect } from 'react';
 import { Movie } from '../types';
 import { getWatchHistory, getRecommendedMovies } from '../services/movieService';
 import MovieList from '../components/MovieList';
-
-// A mock user ID. In a real app, you'd get this from your auth context.
-const MOCK_USER_ID = 'user123';
+import { useAuth } from '../AuthContext'; // Import useAuth
 
 const ProfilePage: React.FC = () => {
+  const { user } = useAuth(); // Get the real user
   const [watchHistory, setWatchHistory] = useState<Movie[]>([]);
   const [recommendedMovies, setRecommendedMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchProfileData = async () => {
+      if (!user) { // Don't fetch if there is no user
+        setLoading(false);
+        return;
+      }
       setLoading(true);
       try {
-        const history = await getWatchHistory(MOCK_USER_ID);
+        const history = await getWatchHistory(user.id); // Use the real user.id
         setWatchHistory(history);
         
         if (history.length > 0) {
@@ -30,7 +33,7 @@ const ProfilePage: React.FC = () => {
     };
 
     fetchProfileData();
-  }, []);
+  }, [user]); // Re-run this when the user logs in or out
 
   if (loading) {
     return (
